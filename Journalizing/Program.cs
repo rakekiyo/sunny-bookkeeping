@@ -22,9 +22,9 @@ try
 
     // TSV作成
     string journalsByDebitAccountTsv
-        = JournalTsv.GetTsvFromJournalsByDebitOrCreditAccount(journalsByDebitAccount, true);
+        = JournalTsv.GetTsvFromJournalsByAccount(journalsByDebitAccount);
     string journalsByCreditAccountTsv
-        = JournalTsv.GetTsvFromJournalsByDebitOrCreditAccount(journalsByCreditAccount, false);
+        = JournalTsv.GetTsvFromJournalsByAccount(journalsByCreditAccount);
 
     // ファイル出力
     System.IO.File.WriteAllText(debitJournalsPath, journalsByDebitAccountTsv);

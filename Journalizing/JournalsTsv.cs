@@ -31,7 +31,7 @@ internal static class JournalTsv
         return Journals;
     }
 
-    public static string GetTsvFromJournalsByDebitOrCreditAccount(Dictionary<string, List<Journal>> journalsByAccount, bool isDebit)
+    public static string GetTsvFromJournalsByAccount(Dictionary<string, List<Journal>> journalsByAccount)
     {
         System.Text.StringBuilder tsv = new();
 
@@ -46,8 +46,8 @@ internal static class JournalTsv
                 tsv.Append($"{Journal.Month}\t");
                 tsv.Append($"{Journal.Date}\t");
                 tsv.Append($"{Journal.Summary}\t");
-                tsv.Append($"{(isDebit ? Journal.DebitMoney : "")}\t");
-                tsv.Append($"{(isDebit ? "" : Journal.CreditMoney)}\t");
+                tsv.Append($"{Journal.DebitMoney.ToString("#,#")}\t");
+                tsv.Append($"{Journal.CreditMoney.ToString("#,#")}\t");
                 tsv.AppendLine();
             }
 

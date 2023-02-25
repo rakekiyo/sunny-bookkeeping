@@ -28,4 +28,34 @@ internal struct Journal
     /// 貸型金額
     /// </summary>
     public decimal CreditMoney { get; init; }
+
+    public Journal CreateDebitJournal()
+    {
+        return new Journal()
+        {
+            SerialNumber = this.SerialNumber,
+            Month = this.Month,
+            Date = this.Date,
+            DebitMoney = this.DebitMoney,
+            DebitAccount = this.DebitAccount,
+            Summary = this.Summary,
+            CreditAccount = "",
+            CreditMoney = 0
+        };
+    }
+
+    public Journal CreateCreditJournal()
+    {
+        return new Journal()
+        {
+            SerialNumber = this.SerialNumber,
+            Month = this.Month,
+            Date = this.Date,
+            DebitMoney = 0,
+            DebitAccount = "",
+            Summary = this.Summary,
+            CreditAccount = this.CreditAccount,
+            CreditMoney = this.CreditMoney
+        };
+    }
 }
