@@ -1,4 +1,4 @@
-internal struct Slip
+internal struct Journal
 {
     public int SerialNumber { get; init; }
     // public int Year { get; init; }
@@ -16,9 +16,9 @@ internal struct Slip
     public string CreditAccount { get; init; }
     public decimal CreditMoney { get; init; }
 
-    public static IList<Slip> GetFromTsv(string path)
+    public static IList<Journal> GetFromTsv(string path)
     {
-        List<Slip> slips = new();
+        List<Journal> Journals = new();
         int serialNumber = 0;
 
         // 1行目は読み飛ばし
@@ -26,7 +26,7 @@ internal struct Slip
         {
             string[] items = line.Split('\t');
 
-            slips.Add(new Slip()
+            Journals.Add(new Journal()
             {
                 SerialNumber = serialNumber++,
                 Month = Convert.ToInt32(items[0]),
@@ -39,6 +39,6 @@ internal struct Slip
             });
         }
 
-        return slips;
+        return Journals;
     }
 }

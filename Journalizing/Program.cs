@@ -21,8 +21,8 @@ string targetPath = commands[1];
 Console.WriteLine("次のファイルがドロップされました");
 Console.WriteLine(targetPath);
 
-IList<Slip> slips = Slip.GetFromTsv(targetPath);
+IList<Journal> Journals = Journal.GetFromTsv(targetPath);
 
-AggrigationWorker.Aggrigate(slips);
+AggrigationWorker.Aggrigate(Journals);
 
 

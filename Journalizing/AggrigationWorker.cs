@@ -5,31 +5,31 @@ using System.ComponentModel.Design;
 using System.Collections.ObjectModel;
 internal static class AggrigationWorker
 {
-    public static void Aggrigate(IList<Slip> _slips)
+    public static void Aggrigate(IList<Journal> _Journals)
     {
-        ReadOnlyCollection<Slip> slips = new(_slips);
+        ReadOnlyCollection<Journal> Journals = new(_Journals);
 
-        IList<string> debitAccounts = slips.Select(s => s.DebitAccount).Distinct().ToList();
-        IList<string> creditAccounts = slips.Select(s => s.CreditAccount).Distinct().ToList();
+        IList<string> debitAccounts = Journals.Select(s => s.DebitAccount).Distinct().ToList();
+        IList<string> creditAccounts = Journals.Select(s => s.CreditAccount).Distinct().ToList();
 
         // 借方科目別伝票を作成
-        Dictionary<string, List<Slip>> aggrigatedDebitSlips = debitAccounts.ToDictionary(
-            debitAccount => debitAccount, debitAccount => slips.Where(slip => slip.DebitAccount == debitAccount).ToList());
+        Dictionary<string, List<Journal>> aggrigatedDebitJournals = debitAccounts.ToDictionary(
+            debitAccount => debitAccount, debitAccount => Journals.Where(Journal => Journal.DebitAccount == debitAccount).ToList());
 
         // 貸方科目別伝票を作成
-        Dictionary<string, List<Slip>> aggrigatedCreditSlips = creditAccounts.ToDictionary(
-            creditAccount => creditAccount, creditAccount => slips.Where(slip => slip.CreditAccount == creditAccount).ToList());
+        Dictionary<string, List<Journal>> aggrigatedCreditJournals = creditAccounts.ToDictionary(
+            creditAccount => creditAccount, creditAccount => Journals.Where(Journal => Journal.CreditAccount == creditAccount).ToList());
 
-        printTsv(aggrigatedDebitSlips, "貸方科目", true);
-        printTsv(aggrigatedCreditSlips, "借方科目", false);
+        printTsv(aggrigatedDebitJournals, "貸方科目", true);
+        printTsv(aggrigatedCreditJournals, "借方科目", false);
     }
 
-    private static void printTsv(Dictionary<string, List<Slip>> aggrigatedSlips, string title, bool isDebit)
+    private static void printTsv(Dictionary<string, List<Journal>> aggrigatedJournals, string title, bool isDebit)
     {
         StringBuilder tsv = new StringBuilder(title);
 
         // 科目ごとにループ
-        aggrigatedSlips.ToList().ForEach(slips =>
+        aggrigatedJournals.ToList().ForEach(Journals =>
         {
             int currentMonth = 0;
             Decimal debitTotal = 0m;
@@ -38,12 +38,12 @@ internal static class AggrigationWorker
             Decimal creditAllTotal = 0m;
 
             tsv.AppendLine();
-            tsv.AppendLine(slips.Key);
+            tsv.AppendLine(Journals.Key);
             tsv.AppendLine("月\t日\t摘要\t借方\t貸方");
 
-            foreach (var slip in slips.Value.OrderBy(s => s.Month))
+            foreach (var Journal in Journals.Value.OrderBy(s => s.Month))
             {
-                if (currentMonth != slip.Month)
+                if (currentMonth != Journal.Month)
                 {
                     if (currentMonth > 0)
                     {
@@ -57,18 +57,18 @@ internal static class AggrigationWorker
                     debitTotal = 0m;
                     creditTotal = 0m;
 
-                    currentMonth = slip.Month;
+                    currentMonth = Journal.Month;
                 }
 
-                tsv.Append($"{slip.Month}\t");
-                tsv.Append($"{slip.Date}\t");
-                tsv.Append($"{slip.Summary}\t");
-                tsv.Append($"{(isDebit ? slip.DebitMoney : "")}\t");
-                tsv.Append($"{(isDebit ? "" : slip.CreditMoney)}\t");
+                tsv.Append($"{Journal.Month}\t");
+                tsv.Append($"{Journal.Date}\t");
+                tsv.Append($"{Journal.Summary}\t");
+                tsv.Append($"{(isDebit ? Journal.DebitMoney : "")}\t");
+                tsv.Append($"{(isDebit ? "" : Journal.CreditMoney)}\t");
                 tsv.AppendLine();
 
-                debitTotal += slip.DebitMoney;
-                creditTotal += slip.CreditMoney;
+                debitTotal += Journal.DebitMoney;
+                creditTotal += Journal.CreditMoney;
             }
 
             debitAllTotal += debitTotal;
