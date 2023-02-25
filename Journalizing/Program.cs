@@ -1,28 +1,38 @@
-﻿using System.Transactions;
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using Journalizing;
+
+string inputJournalsPath = @"仕訳帳.tsv";
+string debitJournalsPath = @"借方仕分帳.tsv";
+string creditJournalsPath = @"貸方仕分帳.tsv";
 
 #if DEBUG 
-string[] commands = new String[] { "", @"C:\Users\taketsugu.kyohei\Desktop\input.tsv" };
-#else
-//コマンドライン引数を配列で取得する
-string[] commands = System.Environment.GetCommandLineArgs();
+inputJournalsPath = @"TestResource\仕訳帳.tsv";
+debitJournalsPath = @"TestResource\借方仕分帳.tsv";
+creditJournalsPath = @"TestResource\貸方仕分帳.tsv";
 #endif
 
-
-if (commands.Length <= 1)
+try
 {
-    Console.WriteLine("ドロップされたファイルはありませんでした");
-    return;
+    // 仕訳リストを取得
+    IList<Journal> journals = JournalTsv.GetJournalsFromTsv(inputJournalsPath);
+
+    // 分類訳
+    (Dictionary<string, List<Journal>> journalsByDebitAccount,
+        Dictionary<string, List<Journal>> journalsByCreditAccount)
+        = JournalClassification.ClassifyByDebitAndCreditAccounts(journals);
+
+    // TSV作成
+    string journalsByDebitAccountTsv
+        = JournalTsv.GetTsvFromJournalsByDebitOrCreditAccount(journalsByDebitAccount, true);
+    string journalsByCreditAccountTsv
+        = JournalTsv.GetTsvFromJournalsByDebitOrCreditAccount(journalsByCreditAccount, false);
+
+    // ファイル出力
+    System.IO.File.WriteAllText(debitJournalsPath, journalsByDebitAccountTsv);
+    System.IO.File.WriteAllText(creditJournalsPath, journalsByCreditAccountTsv);
 }
-
-string targetPath = commands[1];
-
-Console.WriteLine("次のファイルがドロップされました");
-Console.WriteLine(targetPath);
-
-IList<Journal> Journals = Journal.GetFromTsv(targetPath);
-
-JournalClassification.Classify(Journals);
-
-
+catch (Exception ex)
+{
+    Log.output(ex.Message);
+    Log.output(ex.StackTrace);
+    System.Environment.Exit(1);
+}
