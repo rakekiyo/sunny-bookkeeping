@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Text;
 using System.ComponentModel.Design;
 using System.Collections.ObjectModel;
-internal static class AggrigationWorker
+internal static class JournalClassification
 {
-    public static void Aggrigate(IList<Journal> _Journals)
+    public static void Classify(IList<Journal> _Journals)
     {
         ReadOnlyCollection<Journal> Journals = new(_Journals);
 

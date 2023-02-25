@@ -23,6 +23,6 @@ Console.WriteLine(targetPath);
 
 IList<Journal> Journals = Journal.GetFromTsv(targetPath);
 
-AggrigationWorker.Aggrigate(Journals);
+JournalClassification.Classify(Journals);
 
 
