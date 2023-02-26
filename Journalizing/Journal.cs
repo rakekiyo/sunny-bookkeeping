@@ -6,12 +6,12 @@ namespace Journalizing;
 internal struct Journal
 {
     public int SerialNumber { get; init; }
-    public int Month { get; init; }
-    public int Date { get; init; }
+    public int? Month { get; init; }
+    public int? Date { get; init; }
     /// <summary>
     /// 借方金額
     /// </summary>
-    public decimal DebitMoney { get; init; }
+    public decimal? DebitMoney { get; init; }
     /// <summary>
     /// 借方科目
     /// </summary>
@@ -27,7 +27,7 @@ internal struct Journal
     /// <summary>
     /// 貸型金額
     /// </summary>
-    public decimal CreditMoney { get; init; }
+    public decimal? CreditMoney { get; init; }
 
     public Journal CreateDebitJournal()
     {

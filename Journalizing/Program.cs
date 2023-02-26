@@ -1,19 +1,22 @@
 ﻿using Journalizing;
 
-string inputJournalsPath = @"仕訳帳.tsv";
-string debitJournalsPath = @"借方仕分帳.tsv";
-string creditJournalsPath = @"貸方仕分帳.tsv";
+string now = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+string inputJournalsPath = @"仕訳帳.txt";
+string debitJournalsPath = @$"借方仕分帳_{now}.txt";
+string creditJournalsPath = @$"貸方仕分帳_{now}.txt";
 
 #if DEBUG 
-inputJournalsPath = @"TestResource\仕訳帳.tsv";
-debitJournalsPath = @"TestResource\借方仕分帳.tsv";
-creditJournalsPath = @"TestResource\貸方仕分帳.tsv";
+inputJournalsPath = @"TestResource\仕訳帳.txt";
+debitJournalsPath = @"TestResource\借方仕分帳.txt";
+creditJournalsPath = @"TestResource\貸方仕分帳.txt";
 #endif
 
 try
 {
     // 仕訳リストを取得
-    IList<Journal> journals = JournalTsv.GetJournalsFromTsv(inputJournalsPath);
+    (string firstLine, IList<Journal> journals)
+        = JournalTsv.GetJournalsFromTsv(inputJournalsPath);
 
     // 分類訳
     (Dictionary<string, List<Journal>> journalsByDebitAccount,
@@ -22,9 +25,9 @@ try
 
     // TSV作成
     string journalsByDebitAccountTsv
-        = JournalTsv.GetTsvFromJournalsByAccount(journalsByDebitAccount);
+        = JournalTsv.GetTsvFromJournalsByAccount(firstLine, journalsByDebitAccount);
     string journalsByCreditAccountTsv
-        = JournalTsv.GetTsvFromJournalsByAccount(journalsByCreditAccount);
+        = JournalTsv.GetTsvFromJournalsByAccount(firstLine, journalsByCreditAccount);
 
     // ファイル出力
     System.IO.File.WriteAllText(debitJournalsPath, journalsByDebitAccountTsv);
